@@ -1,11 +1,13 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using ShapesApp.Creators;
+using ShapesApp.Factories;
 
 namespace ShapesApp
 {
     public partial class MainWindow : Window
     {
+        private IFigureFactory currentFactory;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -15,44 +17,32 @@ namespace ShapesApp
         {
             figuresPanel.Children.Clear();
 
-            if (colorComboBox.SelectedItem == null)
-                return;
+            if (colorComboBox.SelectedItem == null) return;
 
             var selectedItem = (ComboBoxItem)colorComboBox.SelectedItem;
             string colorName = selectedItem.Content.ToString();
-
-            CircleCreator circleCreator;
-            SquareCreator squareCreator;
-            TriangleCreator triangleCreator;
 
             switch (colorName)
             {
                 case "🔴 Красный":
                 case "Красный":
-                    circleCreator = new RedCircleCreator();
-                    squareCreator = new RedSquareCreator();
-                    triangleCreator = new RedTriangleCreator();
+                    currentFactory = new RedFactory();
                     break;
                 case "🔵 Синий":
                 case "Синий":
-                    circleCreator = new BlueCircleCreator();
-                    squareCreator = new BlueSquareCreator();
-                    triangleCreator = new BlueTriangleCreator();
+                    currentFactory = new BlueFactory();
                     break;
                 case "🟢 Зелёный":
                 case "Зелёный":
-                    circleCreator = new GreenCircleCreator();
-                    squareCreator = new GreenSquareCreator();
-                    triangleCreator = new GreenTriangleCreator();
+                    currentFactory = new GreenFactory();
                     break;
                 default:
                     return;
             }
 
-           
-            figuresPanel.Children.Add(circleCreator.CreateCircle().CreateUIElement(200));
-            figuresPanel.Children.Add(squareCreator.CreateSquare().CreateUIElement(200));
-            figuresPanel.Children.Add(triangleCreator.CreateTriangle().CreateUIElement(200));
+            figuresPanel.Children.Add(currentFactory.CreateCircle().CreateUIElement(200));
+            figuresPanel.Children.Add(currentFactory.CreateSquare().CreateUIElement(200));
+            figuresPanel.Children.Add(currentFactory.CreateTriangle().CreateUIElement(200));
         }
     }
 }
